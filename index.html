@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>KSP VoiceEditor</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="container">
+        <div class="col-md-12 input-group">
+            <span class="input-group-addon"><span class="glyphicon glyphicon-record"></span></span>
+            <input type="text" class="form-control" placeholder="Tell me something" id="voice_input">
+            <span class="input-group-addon">EN-US</span>
+        </div>
+        <div class="col-md-12">
+            <textarea id="editor" class="form-control" rows="40"></textarea>
+        </div>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        var recognition = new webkitSpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+
+        recognition.onstart = function() { console.info('Recognition started'); }
+        recognition.onresult = function(event) {
+            var interim_transcript = '';
+            var final_transcript = '';
+
+            for (var i = event.resultIndex; i < event.results.length; ++i) {
+                if (event.results[i].isFinal) {
+                    final_transcript += event.results[i][0].transcript;
+                } else {
+                    interim_transcript += event.results[i][0].transcript;
+                }
+            }
+            $('#voice_input').val(interim_transcript);
+            $('#editor').append(final_transcript);
+
+        };
+
+        recognition.onerror = function(event) { alert('error'); console.error(event); }
+        recognition.onend = function() { console.info('recogition finished'); }
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            final_transcript = '';
+            recognition.lang = 'en-US';
+            recognition.start();
+        });
+    </script>
+</body>
+</html>
