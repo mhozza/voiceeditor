@@ -7,9 +7,22 @@ from django.utils.encoding import python_2_unicode_compatible
 
 
 @python_2_unicode_compatible
+class Feature(models.Model):
+    name = models.CharField(max_length=100)
+
+    class Meta:
+        verbose_name = 'Feature'
+        verbose_name_plural = 'Features'
+
+    def __str__(self):
+        return self.name
+
+
+@python_2_unicode_compatible
 class Editor(models.Model):
     number = models.IntegerField()
     ip = models.IPAddressField()
+    features = models.ManyToManyField(Feature)
 
     class Meta:
         verbose_name = 'Editor'
