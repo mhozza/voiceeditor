@@ -8,5 +8,6 @@ urlpatterns = patterns('',
     # url(r'^$', 'voiceeditor.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
+    url(r'^$', 'voiceeditor.views.editor', name='editor'),
     url(r'^admin/', include(admin.site.urls)),
 )
