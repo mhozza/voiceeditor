@@ -33,38 +33,7 @@
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script type="text/javascript" src="{% static "js/jquery.min.js"%}"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="{% static "js/bootstrap.min.js"%}"></script>
-    <script type="text/javascript">
-        var recognition = new webkitSpeechRecognition();
-        recognition.continuous = true;
-        recognition.interimResults = true;
-
-        recognition.onstart = function() { console.info('Recognition started'); }
-        recognition.onresult = function(event) {
-            var interim_transcript = '';
-            var final_transcript = '';
-
-            for (var i = event.resultIndex; i < event.results.length; ++i) {
-                if (event.results[i].isFinal) {
-                    final_transcript += event.results[i][0].transcript;
-                } else {
-                    interim_transcript += event.results[i][0].transcript;
-                }
-            }
-            $('#voice_input').val(interim_transcript);
-            $('#editor').append(final_transcript);
-
-        };
-
-        recognition.onerror = function(event) { alert('error'); console.error(event); }
-        recognition.onend = function() { console.info('recogition finished'); }
-    </script>
-    <script type="text/javascript">
-        $(document).ready(function(){
-            final_transcript = '';
-            recognition.lang = 'en-US';
-            recognition.start();
-        });
-    </script>
+    <script type="text/javascript" src="{% static "js/bootstrap.min.js"%}"></script>
+    <script type="text/javascript" src="{% static "js/recognition.js"%}"></script>
 </body>
 </html>
