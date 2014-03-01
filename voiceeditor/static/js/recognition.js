@@ -77,6 +77,16 @@ $(document).click(function(e) {
 //     return false;
 // });
 
+$(document).bind('selectstart', function(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    e.cancelBubble = true;
+    e.stopImmediatePropagation();
+    return false;
+});
+
+
+
 
 function set_mapping(value) {
     window.mapping = value;

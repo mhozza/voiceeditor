@@ -49,17 +49,30 @@ class Mapping(models.Model):
 
 @python_2_unicode_compatible
 class Command(models.Model):
-    editor = models.ForeignKey(Editor)
-    words = models.CharField(max_length=200)
-    command = models.CharField(max_length=50)
+    function = models.CharField(max_length=50)
+    argnum = models.IntegerField(default=0)
 
     class Meta:
         verbose_name = 'Command'
         verbose_name_plural = 'Commands'
 
     def __str__(self):
+        return self.function + '(' + str(self.argnum) + ')'
+
+
+@python_2_unicode_compatible
+class CommandMapping(models.Model):
+    editor = models.ForeignKey(Editor)
+    words = models.CharField(max_length=200)
+    command = models.ForeignKey(Command)
+
+    class Meta:
+        verbose_name = 'CommandMapping'
+        verbose_name_plural = 'CommandMappings'
+
+    def __str__(self):
         return str(self.editor.number) + ': ' + self.words\
-            + ' -> ' + self.command
+            + ' -> ' + self.command.__str__()
 
 
 @python_2_unicode_compatible
