@@ -6,13 +6,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>KSP VoiceEditor</title>
-
-    <!-- Bootstrap -->
-
     <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
-
+    <link href="{% static "css/styles/default.css" %}" rel="stylesheet">
+    <link href="{% static "css/editor.css" %}" rel="stylesheet">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
@@ -26,7 +23,7 @@
             <span class="input-group-addon">EN-US</span>
         </div>
         <div class="col-md-12">
-            <textarea id="editor" class="form-control" rows="40"></textarea>
+            <ol id="editor"></ol>
         </div>
     </div>
 
@@ -35,6 +32,6 @@
     <script type="text/javascript" src="{% static "js/commands.js"%}"></script>
     <script type="text/javascript" src="{% static "js/recognition.js"%}"></script>
     <script type="text/javascript" src="{% static "js/jquery-textrange.js"%}"></script>
-
+    <script type="text/javascript" src="{% static "js/highlight.pack.js"%}"></script>
 </body>
 </html>

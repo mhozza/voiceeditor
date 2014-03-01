@@ -1,0 +1,25 @@
+#editor {
+    font-family: "Courier New", monospace;
+    font-size: 12pt;
+}
+
+.cursor {
+    display:inline-block;
+    width: 1px;
+    height: 10pt;
+    background-color: black;
+    animation: blink 1s linear infinite;
+    -webkit-animation: blink 1s linear infinite;
+}
+
+@keyframes blink {
+    to {
+        background-color: transparent;
+    }
+}
+
+@-webkit-keyframes blink {
+    to {
+        background-color: transparent;
+    }
+}

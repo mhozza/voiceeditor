@@ -3,6 +3,10 @@ var mapping = null;
 var commands = null;
 var features = null;
 var refresh_time = 10000;
+var lines_start = [];
+var current_line_start = '';
+var current_line_end = '';
+var lines_end = [];
 
 recognition.continuous = true;
 recognition.interimResults = true;
@@ -50,15 +54,45 @@ $(document).ready(function() {
     update_tables();
     final_transcript = '';
     recognition.lang = 'en-US';
+    // recognition.lang = 'sk-SK';
     recognition.start();
+    // $("#editor").attr("readonly", "readonly");
+    refresh_editor();
+
 });
+
+$(document).click(function(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    e.cancelBubble = true;
+    e.stopImmediatePropagation();
+    return false;
+});
+
+// $(document).bind('contextmenu', function(e) {
+//     e.stopPropagation();
+//     e.preventDefault();
+//     e.cancelBubble = true;
+//     e.stopImmediatePropagation();
+//     return false;
+// });
+
 
 function set_mapping(value) {
     window.mapping = value;
 }
 
 function set_features(value) {
-    window.features = value;
+    window.features = {};
+    for(var i in value) {
+        window.features[value[i].fields.name] = true;
+    }
+
+    // if ('highlight' in window.features) {
+    //     $("#editor").addClass('sh_pascal');
+    // } else {
+    //     $("#editor").removeClass('sh_pascal');
+    // }
 }
 
 function set_commands(value) {
@@ -131,8 +165,35 @@ function get_mapping(text) {
 }
 
 function insert_text(text) {
-    $('#editor').textrange('replace', text);
-    selection = $('#editor').textrange('get');
+    if (text == '') {
+        return;
+    }
+    if (features.autospace) {
+        text = text + ' ';
+    }
+    // $('#editor').textrange('replace', text)
+    // selection = $('#editor').textrange('get');
     // console.log(selection);
-    $('#editor').textrange('setcursor', selection.end);
+    // $('#editor').textrange('setcursor', selection_start.end);
+    current_line_start += text;
+    refresh_editor();
+
+}
+
+function refresh_editor() {
+    editor = $('#editor');
+    editor.empty();
+    for (var i in lines_start) {
+        editor.append("<li>"+ lines_start[i] +"</li>");
+    }
+
+    editor.append('<li class="current_line">' +current_line_start + '<div class="cursor"></div>' + current_line_end + "</li>");
+
+    for (var i in lines_end) {
+        editor.append("<li>"+ lines_end[i] +"</li>");
+    }
+
+    if (window.features != null && 'highlight' in window.features) {
+        $('#editor').each(function(i, e) {hljs.highlightBlock(e)});
+    }
 }
