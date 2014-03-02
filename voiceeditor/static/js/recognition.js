@@ -105,6 +105,7 @@ function create_mapping_lexeme_function(chars) {
 
 function create_command_lexeme_function(fname, prefixlen) {
     return function(lexeme) {
+        console.log(lexeme);
         return {
             'type': 'command',
             'fname': fname,
@@ -125,7 +126,7 @@ function refresh_lexer() {
 
     for (var i in window.commands) {
         re = new RegExp(window.commands[i].fields.words
-            + '(\w*\s*){'+window.commands[i].fields.command.fields.argnum +'}',
+            + '(\\s*\\w*){'+window.commands[i].fields.command.fields.argnum +'}',
             'i'
         );
         var fname = window.commands[i].fields.command.fields.function;
@@ -136,7 +137,6 @@ function refresh_lexer() {
     for (var i in window.mapping) {
         re = new RegExp(window.mapping[i].fields.words, 'i');
         var chars = window.mapping[i].fields.chars;
-        console.log(chars);
         window.lexer.addRule(re, create_mapping_lexeme_function(chars));
     }
 }
@@ -189,7 +189,12 @@ function process_input(final_transcript) {
 }
 
 function process_command(command, args) {
-    eval(command + "()");
+    args = args.trim();
+    args_array = args.split(' ');
+    for (var i in args_array){
+        args_array[i] = '"' + args_array[i] + '"';
+    }
+    eval(command + "(" + args_array.join(',') + ")");
 }
 
 function get_command(text) {
@@ -231,10 +236,6 @@ function insert_text(text) {
     if (features.autospace) {
         text = text + ' ';
     }
-    // $('#editor').textrange('replace', text)
-    // selection = $('#editor').textrange('get');
-    // console.log(selection);
-    // $('#editor').textrange('setcursor', selection_start.end);
     current_line_start += text;
     refresh_editor();
 
