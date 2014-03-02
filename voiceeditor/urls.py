@@ -1,4 +1,5 @@
 from django.conf.urls import patterns, include, url
+import voiceeditor.submit.urls
 
 from django.contrib import admin
 admin.autodiscover()
@@ -8,6 +9,7 @@ urlpatterns = patterns('',
     # url(r'^$', 'voiceeditor.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
     url(r'^$', 'voiceeditor.views.editor', name='editor'),
+    url(r'^submit/', include(voiceeditor.submit.urls)),
     url(r'^api/commands/$', 'voiceeditor.views.get_commands', name='commands'),
     url(r'^api/features/$', 'voiceeditor.views.get_features', name='features'),
     url(r'^api/mapping/$', 'voiceeditor.views.get_mapping', name='mapping'),

@@ -45,11 +45,6 @@ recognition.onerror = function(event) {
         console.log('info_no_microphone');
     }
     if (event.error == 'not-allowed') {
-        if (event.timeStamp - start_timestamp < 100) {
-            console.log('info_blocked');
-        } else {
-            console.log('info_denied');
-        }
     }
 };
 recognition.onend = function() {
