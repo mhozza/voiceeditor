@@ -1,5 +1,10 @@
 function submit() {
+    var all = lines_start.join('\n') + '\n' + current_line_start + current_line_end + '\n' + lines_end.join('\n')
     console.log("Command: submit");
+    var url = "/submit/1/"
+    jQuery.post(url, {'data': all, 'language': '.cc'}, function(result) {
+        console.log(result);
+    });
 }
 
 function left() {

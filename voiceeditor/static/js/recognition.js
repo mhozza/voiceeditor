@@ -39,11 +39,11 @@ recognition.onerror = function(event) {
         console.log('info_no_microphone');
     }
     if (event.error == 'not-allowed') {
+
     }
 };
 recognition.onend = function() {
-    console.info('recogition finished');
-    recognition.start();
+    recognition.start()
 }
 $(document).ready(function() {
     update_tables();
