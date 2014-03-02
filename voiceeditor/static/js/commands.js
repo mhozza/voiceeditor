@@ -90,3 +90,7 @@ function end() {
     current_line_end = '';
     refresh_editor();
 }
+
+function pokus(arg1, arg2) {
+    console.log("pokus" + '(' + arg1 + ',' + arg2 + ')');
+}
