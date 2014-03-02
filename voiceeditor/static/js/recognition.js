@@ -1,4 +1,10 @@
 var recognition = new webkitSpeechRecognition();
+var lexer = new Lexer(function(char) {
+    return {
+        type: 'char',
+        'chars': char
+    }
+});
 var mapping = null;
 var commands = null;
 var features = null;
@@ -84,15 +90,62 @@ function set_mapping(value) {
     window.mapping = value;
 }
 
+function set_commands(value) {
+    window.commands = value;
+}
+
+function create_mapping_lexeme_function(chars) {
+    return function(lexeme) {
+        return {
+            'type': 'mapping',
+            'chars': chars
+        }
+    }
+}
+
+function create_command_lexeme_function(fname, prefixlen) {
+    return function(lexeme) {
+        return {
+            'type': 'command',
+            'fname': fname,
+            'args': lexeme.substring(prefixlen),
+            'chars': ''
+        }
+    }
+}
+
+
+function refresh_lexer() {
+    window.lexer = new Lexer(function(char) {
+        return {
+            type: 'char',
+            'chars': char
+        }
+    });
+
+    for (var i in window.commands) {
+        re = new RegExp(window.commands[i].fields.words
+            + '(\w*\s*){'+window.commands[i].fields.command.fields.argnum +'}',
+            'i'
+        );
+        var fname = window.commands[i].fields.command.fields.function;
+        var prefixlen = window.commands[i].fields.words.length;
+        window.lexer.addRule(re, create_command_lexeme_function(fname, prefixlen));
+    }
+
+    for (var i in window.mapping) {
+        re = new RegExp(window.mapping[i].fields.words, 'i');
+        var chars = window.mapping[i].fields.chars;
+        console.log(chars);
+        window.lexer.addRule(re, create_mapping_lexeme_function(chars));
+    }
+}
+
 function set_features(value) {
     window.features = {};
     for(var i in value) {
         window.features[value[i].fields.name] = true;
     }
-}
-
-function set_commands(value) {
-    window.commands = value;
 }
 
 function update_tables() {
@@ -107,12 +160,14 @@ function update_tables() {
       url: "/api/mapping/",
     }).success(function(data) {
       set_mapping(data);
+      refresh_lexer();
     });
 
     $.ajax({
       url: "/api/commands/",
     }).success(function(data) {
       set_commands(data);
+      refresh_lexer();
     });
     console.log(window.mapping);
     console.log(window.features);
@@ -121,22 +176,16 @@ function update_tables() {
 }
 
 function process_input(final_transcript) {
+    lexer.setInput(final_transcript);
     while (1) {
-        command = get_command(final_transcript);
-        if (command == null) break;
-        console.log(command);
-        process_command(command.fname, command.args);
-        final_transcript = final_transcript.substring(0, command.startpos)
-            + final_transcript.substring(command.endpos);
+        lexeme = lexer.lex();
+        if (typeof(lexeme) == "undefined") break;
+        console.log(lexeme);
+        insert_text(lexeme.chars);
+        if (lexeme.type == 'command') {
+            process_command(lexeme.fname, lexeme.args);
+        }
     }
-    mapp = get_mapping(final_transcript)
-    console.log(mapp);
-    if (mapp == null) {
-        insert_text(final_transcript);
-    } else {
-        insert_text(mapp);
-    }
-    return final_transcript;
 }
 
 function process_command(command, args) {
