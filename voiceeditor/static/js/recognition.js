@@ -28,7 +28,7 @@ recognition.onresult = function(event) {
         }
     }
     $('#voice_input').val(interim_transcript);
-    process_input(final_transcript.trim().toLowerCase());
+    final_transcript = process_input(final_transcript.trim().toLowerCase());
 };
 
 recognition.onerror = function(event) {
@@ -54,9 +54,9 @@ $(document).ready(function() {
     update_tables();
     final_transcript = '';
     recognition.lang = 'en-US';
-    // recognition.lang = 'sk-SK';
+    recognition.lang = 'sk-SK';
+    $('#lang').text(recognition.lang);
     recognition.start();
-    // $("#editor").attr("readonly", "readonly");
     refresh_editor();
 
 });
@@ -85,9 +85,6 @@ $(document).bind('selectstart', function(e) {
     return false;
 });
 
-
-
-
 function set_mapping(value) {
     window.mapping = value;
 }
@@ -97,12 +94,6 @@ function set_features(value) {
     for(var i in value) {
         window.features[value[i].fields.name] = true;
     }
-
-    // if ('highlight' in window.features) {
-    //     $("#editor").addClass('sh_pascal');
-    // } else {
-    //     $("#editor").removeClass('sh_pascal');
-    // }
 }
 
 function set_commands(value) {
@@ -135,30 +126,45 @@ function update_tables() {
 }
 
 function process_input(final_transcript) {
-    command = get_command(final_transcript);
-    console.log(command);
-    if (command == null) {
-        mapp = get_mapping(final_transcript)
-        console.log(mapp);
-        if (mapp == null) {
-            insert_text(final_transcript);
-        } else {
-            insert_text(mapp);
-        }
-    } else {
-        process_command(command);
+    while (1) {
+        command = get_command(final_transcript);
+        if (command == null) break;
+        console.log(command);
+        process_command(command.fname, command.args);
+        final_transcript = final_transcript.substring(0, command.startpos)
+            + final_transcript.substring(command.endpos);
     }
+    mapp = get_mapping(final_transcript)
+    console.log(mapp);
+    if (mapp == null) {
+        insert_text(final_transcript);
+    } else {
+        insert_text(mapp);
+    }
+    return final_transcript;
 }
 
-function process_command(command) {
+function process_command(command, args) {
     eval(command + "()");
 }
 
 function get_command(text) {
     for(var i in window.commands) {
         c = window.commands[i];
-        if (c.fields.words == text) {
-            return c.fields.command;
+        pos = text.search(c.fields.words);
+        if (pos != -1) {
+            endpos = pos + c.fields.words.length;
+            suffix = text.substring(endpos);
+            args = suffix.split(' ', c.fields.command.fields.argnum);
+            for (var j in args) {
+                endpos += args[j].length + 1;
+            }
+            return {
+                'fname': c.fields.command.fields.function,
+                'args': args,
+                'startpos': pos,
+                'endpos': endpos
+            };
         }
     }
     return null;

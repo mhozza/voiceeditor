@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.core import serializers
-from models import Editor, Mapping, Command
+from models import Editor, Mapping, CommandMapping
 
 
 def editor(request):
@@ -27,5 +27,9 @@ def get_features(request):
 
 def get_commands(request):
     editor = get_editor(request)
-    data = serializers.serialize('json', Command.objects.filter(editor=editor))
+    data = serializers.serialize(
+        'json',
+        CommandMapping.objects.filter(editor=editor).select_related('command'),
+        relations=('command', ),
+    )
     return HttpResponse(data, content_type='application/json')

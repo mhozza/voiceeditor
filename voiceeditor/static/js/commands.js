@@ -44,7 +44,7 @@ function down() {
     refresh_editor();
 }
 
-function new_line() {
+function newline() {
     lines_start.push(current_line_start);
     current_line_start = '';
     refresh_editor();

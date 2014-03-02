@@ -50,6 +50,10 @@ MIDDLEWARE_CLASSES = (
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
+SERIALIZATION_MODULES = {
+    'json': 'wadofstuff.django.serializers.json'
+}
+
 ROOT_URLCONF = 'voiceeditor.urls'
 
 WSGI_APPLICATION = 'voiceeditor.wsgi.application'
