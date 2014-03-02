@@ -1,10 +1,5 @@
 var recognition = new webkitSpeechRecognition();
-var lexer = new Lexer(function(char) {
-    return {
-        type: 'char',
-        'chars': char
-    }
-});
+var lexer = null;
 var mapping = null;
 var commands = null;
 var features = null;
@@ -59,16 +54,9 @@ $(document).ready(function() {
     recognition.lang = 'sk-SK';
     $('#lang').text(recognition.lang);
     recognition.start();
+    refresh_lexer();
     refresh_editor();
 
-});
-
-$(document).click(function(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    e.cancelBubble = true;
-    e.stopImmediatePropagation();
-    return false;
 });
 
 // $(document).bind('contextmenu', function(e) {
@@ -124,14 +112,14 @@ function create_command_lexeme_function(fname, prefixlen) {
 function refresh_lexer() {
     window.lexer = new Lexer(function(char) {
         return {
-            type: 'char',
+            'type': 'char',
             'chars': char
         }
     });
 
     for (var i in window.commands) {
         re = new RegExp(window.commands[i].fields.words
-            + '(\\s*\\w*){'+window.commands[i].fields.command.fields.argnum +'}',
+            + '\\s?(\\s*\\S*){'+window.commands[i].fields.command.fields.argnum +'}',
             'i'
         );
         var fname = window.commands[i].fields.command.fields.function;
@@ -191,7 +179,7 @@ function update_tasklist() {
     $("#task-list").empty();
     for (var task in window.tasks) {
         // Add task to tasklist
-        $("#task-list").append('<li id=task-' + task + ">" + window.tasks[task].fields.name + "</li>");
+        $("#task-list").append('<li><a id="task-' + task + '">' + window.tasks[task].fields.name + '</a></li>');
         $("#task-"+task).click(function() {
             var id = $(this)[0].id.substr(5);
             window.task = window.tasks[id].pk;
@@ -205,8 +193,8 @@ function process_input(final_transcript) {
     lexer.setInput(final_transcript);
     while (1) {
         lexeme = lexer.lex();
-        if (typeof(lexeme) == "undefined") break;
         console.log(lexeme);
+        if (typeof(lexeme) == "undefined") break;
         insert_text(lexeme.chars);
         if (lexeme.type == 'command') {
             process_command(lexeme.fname, lexeme.args);

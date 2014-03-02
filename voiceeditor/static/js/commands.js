@@ -91,6 +91,18 @@ function end() {
     refresh_editor();
 }
 
-function pokus(arg1, arg2) {
-    console.log("pokus" + '(' + arg1 + ',' + arg2 + ')');
+function multi(what, count) {
+    count = Number(count);
+    var fname = null;
+    for (var i in window.commands) {
+        if (window.commands[i].fields.words == what) {
+            fname = window.commands[i].fields.command.fields.function;
+            break;
+        }
+    }
+    if (fname != null) {
+        for (var i=0; i<count; i++) {
+            eval(fname + '()');
+        }
+    }
 }

@@ -5,9 +5,6 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'voiceeditor.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
     url(r'^$', 'voiceeditor.views.editor', name='editor'),
     url(r'^submit/', include(voiceeditor.submit.urls)),
     url(r'^api/commands/$', 'voiceeditor.views.get_commands', name='commands'),
