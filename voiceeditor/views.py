@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.core import serializers
-from models import Editor, Mapping, CommandMapping
+from models import Editor, Mapping, CommandMapping, Task
 
 
 def editor(request):
@@ -32,4 +32,8 @@ def get_commands(request):
         CommandMapping.objects.filter(editor=editor).select_related('command'),
         relations=('command', ),
     )
+    return HttpResponse(data, content_type='application/json')
+
+def get_tasks(request):
+    data = serializers.serialize('json',Task.objects.all())
     return HttpResponse(data, content_type='application/json')

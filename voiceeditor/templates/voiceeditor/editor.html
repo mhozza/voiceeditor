@@ -17,12 +17,19 @@
   </head>
   <body>
     <div class="container">
-        <div class="col-md-12 input-group">
+        <div class="col-md-4">
+            <h2 id="task-name"></h1>
+            <p id="task-content"></p>
+            <h2>Zoznam úloh</h2>
+            <ul id="task-list">
+            </ul>
+        </div>
+        <div class="col-md-8 input-group">
             <span class="input-group-addon"><span class="glyphicon glyphicon-record"></span></span>
             <input type="text" class="form-control" placeholder="Tell me something" id="voice_input">
             <span class="input-group-addon" id='lang'>EN-US</span>
         </div>
-        <div class="col-md-12">
+        <div class="col-md-8">
             <ol id="editor"></ol>
         </div>
     </div>

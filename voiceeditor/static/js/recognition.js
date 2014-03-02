@@ -13,6 +13,7 @@ var lines_start = [];
 var current_line_start = '';
 var current_line_end = '';
 var lines_end = [];
+window.task = 1;
 
 recognition.continuous = true;
 recognition.interimResults = true;
@@ -94,6 +95,10 @@ function set_commands(value) {
     window.commands = value;
 }
 
+function set_tasks(value) {
+    window.tasks = value;
+}
+
 function create_mapping_lexeme_function(chars) {
     return function(lexeme) {
         return {
@@ -169,10 +174,31 @@ function update_tables() {
       set_commands(data);
       refresh_lexer();
     });
+    $.ajax({
+        url: "/api/tasks/",
+    }).success(function(data) {
+        set_tasks(data);
+        update_tasklist();
+    });
     console.log(window.mapping);
     console.log(window.features);
     console.log(window.commands);
+    console.log(window.tasks);
     window.setTimeout("update_tables()", refresh_time);
+}
+
+function update_tasklist() {
+    $("#task-list").empty();
+    for (var task in window.tasks) {
+        // Add task to tasklist
+        $("#task-list").append('<li id=task-' + task + ">" + window.tasks[task].fields.name + "</li>");
+        $("#task-"+task).click(function() {
+            var id = $(this)[0].id.substr(5);
+            window.task = window.tasks[id].pk;
+            $("#task-name").text(window.tasks[id].fields.name);
+            $("#task-content").text(window.tasks[id].fields.content);
+        });
+    }
 }
 
 function process_input(final_transcript) {

@@ -89,3 +89,11 @@ class Save(models.Model):
     def __str__(self):
         return str(self.editor.number) + ': '\
             + self.name + '(' + str(self.version) + ')'
+
+@python_2_unicode_compatible
+class Task(models.Model):
+    name = models.CharField(max_length=100)
+    content = models.TextField()
+
+    def __str__(self):
+        return str(self.name)
