@@ -107,24 +107,34 @@ function down() {
 }
 
 function newline() {
+    delete_selection();
     lines_start.push(current_line_start);
     current_line_start = '';
     refresh_editor();
 }
 
 function backspace() {
-    if (current_line_start.length > 0) {
-        current_line_start = current_line_start.slice(0, -1);
-    } else {
-        if (lines_start.length > 0) {
-            current_line_start = lines_start[lines_start.length-1] + current_line_start;
-            lines_start.pop();
+    if (selection == null) {
+        if (current_line_start.length > 0) {
+            current_line_start = current_line_start.slice(0, -1);
+        } else {
+            if (lines_start.length > 0) {
+                current_line_start = lines_start[lines_start.length-1] + current_line_start;
+                lines_start.pop();
+            }
         }
+    } else {
+        delete_selection();
     }
     refresh_editor();
 }
 
 function del() {
+    if (selection != null) {
+        delete_selection();
+        refresh_editor();
+        return;
+    }
     if (current_line_end.length > 0) {
         current_line_end = current_line_end.substring(1);
     } else {
@@ -186,7 +196,7 @@ function multi(what, count) {
     }
 }
 
-function toggle_select() {
+function select() {
     if (!selecting) {
         window.selection = {
             'start': current_line_start.length,
@@ -195,7 +205,7 @@ function toggle_select() {
             'line_end': lines_start.length
         }
     }
-    window.selecting = !window.selecting;
+    window.selecting = true;
     refresh_editor();
 }
 
@@ -206,28 +216,53 @@ function deselect() {
 }
 
 function select_line() {
+    end();
+    select_direction = 1;
     window.selection = {
         'start': 0,
         'end': current_line_start.length + current_line_end.length,
         'line_start': lines_start.length,
         'line_end': lines_start.length
     }
+    window.selecting = true;
     refresh_editor();
 }
 
 function select_all() {
-    var end;
-    if (lines_end.length > 0) {
-        end = lines_end[lines_end.length-1].length;
-    } else {
-        end = current_line_start.length + current_line_end.length;
-    }
+    goto_end();
     window.selection = {
         'start': 0,
-        'end': end,
+        'end': current_line_start.length + current_line_end.length,
         'line_start': 0,
         'line_end': lines_start.length + lines_end.length
     }
+    window.selecting = true;
     refresh_editor();
 }
 
+function goto_end() {
+    if (lines_end.length>0) {
+        lines_start.push(current_line_start + current_line_end);
+        for (var i = 0; i<lines_end.length-1; i++) {
+            lines_start.push(lines_end[i]);
+        }
+        current_line_start = lines_end[lines_end.length-1];
+        current_line_end = '';
+        lines_end = [];
+    } else {
+        end();
+    }
+}
+
+// function goto_begin() {
+//     lines_start.push(current_line_start + current_line_end);
+//     if (lines_end.length>0) {
+//         for (var i = 0; i<lines_end.length-1; i++) {
+//             lines_start.push(lines_end[i]);
+//         }
+//         current_line_start = lines_end[lines_end.length-1];
+//         current_line_end = '';
+//     } else {
+//         end();
+//     }
+// }

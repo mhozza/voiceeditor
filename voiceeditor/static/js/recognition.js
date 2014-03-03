@@ -245,6 +245,7 @@ function get_mapping(text) {
 }
 
 function insert_text(text) {
+    delete_selection();
     if (text == '') {
         return;
     }
@@ -324,4 +325,58 @@ function refresh_editor() {
     if (window.features != null && 'highlight' in window.features) {
         $('#editor').each(function(i, e) {hljs.highlightBlock(e)});
     }
+}
+
+function delete_selection() {
+    if (window.selection == null) return;
+    var delete_start = lines_start.length;
+    var delete_end = 0;
+
+    for (var i in lines_start) {
+        if (window.selection!=null && i >= window.selection.line_start && i <= window.selection.line_end) {
+            var first_line = (i == window.selection.line_start);
+            var last_line = (i == window.selection.line_end);
+            if (first_line || last_line) {
+                sel = create_line_selection(window.selection, first_line, last_line, lines_start[i].length, 0);
+                lines_start[i] = lines_start[i].substring(0, sel.start) + lines_start[i].substring(sel.end);
+            } else {
+                delete_start = Math.min(i, delete_start);
+                delete_end = Math.max(i, delete_end);
+            }
+        }
+    }
+
+    lines_start.splice(delete_start, delete_end);
+
+    if (window.selection != null && lines_start.length >= window.selection.line_start && lines_start.length <= window.selection.line_end) {
+        var first_line = (lines_start.length == window.selection.line_start);
+        var last_line = (lines_start.length == window.selection.line_end);
+        sel2 = create_line_selection(window.selection, first_line, last_line, window.current_line_end.length, window.current_line_start.length);
+        sel1 = create_line_selection(window.selection, first_line, last_line, window.current_line_start.length, 0);
+        window.current_line_end = window.current_line_end.substring(0, sel.start) + window.current_line_end.substring(sel.end);
+        window.current_line_start = window.current_line_start.substring(0, sel.start) + window.current_line_start.substring(sel.end);
+    }
+
+    delete_start = lines_start.length;
+    delete_end = 0;
+
+    for (var i in lines_end) {
+        if (window.selection!=null && i + lines_start.length + 1 >= window.selection.line_start && i + lines_start.length + 1 <= window.selection.line_end) {
+            var first_line = (i + lines_start.length + 1 == window.selection.line_start);
+            var last_line = (i + lines_start.length + 1 == window.selection.line_end);
+            if (first_line || last_line) {
+                sel = create_line_selection(window.selection, first_line, last_line, lines_end[i].length, 0);
+                lines_end[i] = lines_end[i].substring(0, sel.start) + lines_end[i].substring(sel.end);
+            } else {
+                delete_start = Math.min(i, delete_start);
+                delete_end = Math.max(i, delete_end);
+            }
+        }
+    }
+    lines_end.splice(delete_start, delete_end);
+    if (selection.line_start != selection.line_end) {
+        current_line_start = lines_start[lines_start.length-1] + current_line_start;
+        lines_start.pop();
+    }
+    deselect();
 }
