@@ -187,11 +187,13 @@ function multi(what, count) {
 }
 
 function toggle_select() {
-    window.selection = {
-        'start': current_line_start.length,
-        'end': current_line_start.length,
-        'line_start': lines_start.length,
-        'line_end': lines_start.length
+    if (!selecting) {
+        window.selection = {
+            'start': current_line_start.length,
+            'end': current_line_start.length,
+            'line_start': lines_start.length,
+            'line_end': lines_start.length
+        }
     }
     window.selecting = !window.selecting;
     refresh_editor();
@@ -203,13 +205,29 @@ function deselect() {
     refresh_editor();
 }
 
-function select_row() {
-//todo
+function select_line() {
+    window.selection = {
+        'start': 0,
+        'end': current_line_start.length + current_line_end.length,
+        'line_start': lines_start.length,
+        'line_end': lines_start.length
+    }
     refresh_editor();
 }
 
 function select_all() {
-//todo
+    var end;
+    if (lines_end.length > 0) {
+        end = lines_end[lines_end.length-1].length;
+    } else {
+        end = current_line_start.length + current_line_end.length;
+    }
+    window.selection = {
+        'start': 0,
+        'end': end,
+        'line_start': 0,
+        'line_end': lines_start.length + lines_end.length
+    }
     refresh_editor();
 }
 
