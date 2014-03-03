@@ -8,6 +8,7 @@ var lines_start = [];
 var current_line_start = '';
 var current_line_end = '';
 var lines_end = [];
+var selection = null;
 window.task = 1;
 
 recognition.continuous = true;
@@ -255,18 +256,69 @@ function insert_text(text) {
 
 }
 
+function select(selection, linetext) {
+    if (selection == null) return linetext;
+    console.log(selection.start, selection.end)
+    text = linetext.substring(0, selection.start);
+    text += '<span class="selected">';
+    text += linetext.substring(selection.start, selection.end);
+    text += '</span>';
+    text += linetext.substring(selection.end);
+    return text;
+}
+
+function create_line_selection(selection, first_line, last_line, line_size, prefix_count) {
+    var start = 0;
+    var end = line_size;
+    console.log('cls:', selection.start, selection.end)
+    if (first_line) {
+        start =Math.min(line_size, Math.max(0, selection.start - prefix_count));
+    }
+    if (last_line) {
+        end = Math.max(0,Math.min(line_size, selection.end - prefix_count));
+    }
+    sel = {'start': start, 'end': end};
+    return sel;
+ }
+
 function refresh_editor() {
     editor = $('#editor');
     editor.empty();
     editor.removeClass('hljs');
     for (var i in lines_start) {
-        editor.append("<li>"+ lines_start[i] +"</li>");
+        var text = lines_start[i];
+        if (window.selection!=null && i >= window.selection.line_start && i <= window.selection.line_end) {
+            var first_line = (i == window.selection.line_start);
+            var last_line = (i == window.selection.line_end);
+            text = select(create_line_selection(window.selection, first_line, last_line, text.length, 0), text);
+        }
+        editor.append("<li>"+ text +"</li>");
     }
 
-    editor.append('<li class="current-line">' +current_line_start + '<div class="cursor"></div>' + current_line_end + "</li>");
+    var text1 = window.current_line_start;
+    var text2 = window.current_line_end;
+    if (window.selection != null && lines_start.length >= window.selection.line_start && lines_start.length <= window.selection.line_end) {
+        var first_line = (lines_start.length == window.selection.line_start);
+        var last_line = (lines_start.length == window.selection.line_end);
+        text2 = select(create_line_selection(window.selection, first_line, last_line, text2.length, text1.length), text2);
+        text1 = select(create_line_selection(window.selection, first_line, last_line, text1.length, 0), text1);
+    }
+
+    editor.append(
+        '<li class="current-line">'
+        + text1
+        + '<div class="cursor"></div>'
+        + text2
+        + "</li>");
 
     for (var i in lines_end) {
-        editor.append("<li>"+ lines_end[i] +"</li>");
+        var text = lines_end[i];
+        if (window.selection!=null && i + lines_start.length + 1 >= window.selection.line_start && i + lines_start.length + 1 <= window.selection.line_end) {
+            var first_line = (i + lines_start.length + 1 == window.selection.line_start);
+            var last_line = (i + lines_start.length + 1 == window.selection.line_end);
+            text = select(create_line_selection(window.selection, first_line, last_line, text.length, 0), text);
+        }
+        editor.append("<li>"+ text +"</li>");
     }
 
     if (window.features != null && 'highlight' in window.features) {
