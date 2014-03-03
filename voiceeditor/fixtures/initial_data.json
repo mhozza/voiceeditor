@@ -12,5 +12,157 @@
     "fields": {
       "name": "autospace"
     }
+  },
+  {
+    "pk": 1,
+    "model": "voiceeditor.command",
+    "fields": {
+      "function": "submit",
+      "argnum": 0
+    }
+  },
+  {
+    "pk": 2,
+    "model": "voiceeditor.command",
+    "fields": {
+      "function": "up",
+      "argnum": 0
+    }
+  },
+  {
+    "pk": 3,
+    "model": "voiceeditor.command",
+    "fields": {
+      "function": "left",
+      "argnum": 0
+    }
+  },
+  {
+    "pk": 4,
+    "model": "voiceeditor.command",
+    "fields": {
+      "function": "right",
+      "argnum": 0
+    }
+  },
+  {
+    "pk": 5,
+    "model": "voiceeditor.command",
+    "fields": {
+      "function": "down",
+      "argnum": 0
+    }
+  },
+  {
+    "pk": 6,
+    "model": "voiceeditor.command",
+    "fields": {
+      "function": "home",
+      "argnum": 0
+    }
+  },
+  {
+    "pk": 7,
+    "model": "voiceeditor.command",
+    "fields": {
+      "function": "end",
+      "argnum": 0
+    }
+  },
+  {
+    "pk": 8,
+    "model": "voiceeditor.command",
+    "fields": {
+      "function": "newline",
+      "argnum": 0
+    }
+  },
+  {
+    "pk": 9,
+    "model": "voiceeditor.command",
+    "fields": {
+      "function": "backspace",
+      "argnum": 0
+    }
+  },
+  {
+    "pk": 10,
+    "model": "voiceeditor.command",
+    "fields": {
+      "function": "del",
+      "argnum": 0
+    }
+  },
+  {
+    "pk": 11,
+    "model": "voiceeditor.command",
+    "fields": {
+      "function": "multi",
+      "argnum": 2
+    }
+  },
+  {
+    "pk": 12,
+    "model": "voiceeditor.command",
+    "fields": {
+      "function": "start_selection",
+      "argnum": 0
+    }
+  },
+  {
+    "pk": 13,
+    "model": "voiceeditor.command",
+    "fields": {
+      "function": "deselect",
+      "argnum": 0
+    }
+  },
+  {
+    "pk": 14,
+    "model": "voiceeditor.command",
+    "fields": {
+      "function": "select_line",
+      "argnum": 0
+    }
+  },
+  {
+    "pk": 15,
+    "model": "voiceeditor.command",
+    "fields": {
+      "function": "select_all",
+      "argnum": 0
+    }
+  },
+  {
+    "pk": 16,
+    "model": "voiceeditor.command",
+    "fields": {
+      "function": "goto_end",
+      "argnum": 0
+    }
+  },
+  {
+    "pk": 17,
+    "model": "voiceeditor.command",
+    "fields": {
+      "function": "copy",
+      "argnum": 0
+    }
+  },
+  {
+    "pk": 18,
+    "model": "voiceeditor.command",
+    "fields": {
+      "function": "cut",
+      "argnum": 0
+    }
+  },
+  {
+    "pk": 19,
+    "model": "voiceeditor.command",
+    "fields": {
+      "function": "paste",
+      "argnum": 0
+    }
   }
 ]
