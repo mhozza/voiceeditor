@@ -3,6 +3,14 @@
     font-size: 12pt;
 }
 
+.current-line {
+    background-color: rgba(200, 128, 0, 0.1);
+}
+
+.selected {
+    background-color: rgba(64, 64, 255, 0.1);
+}
+
 .cursor {
     display:inline-block;
     width: 1px;

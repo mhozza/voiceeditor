@@ -56,7 +56,6 @@ $(document).ready(function() {
     recognition.start();
     refresh_lexer();
     refresh_editor();
-
 });
 
 // $(document).bind('contextmenu', function(e) {
@@ -147,6 +146,7 @@ function update_tables() {
     }).done(function(data) {
       features = data;
       set_features(data);
+      refresh_editor();
     });
 
     $.ajax({
@@ -258,11 +258,12 @@ function insert_text(text) {
 function refresh_editor() {
     editor = $('#editor');
     editor.empty();
+    editor.removeClass('hljs');
     for (var i in lines_start) {
         editor.append("<li>"+ lines_start[i] +"</li>");
     }
 
-    editor.append('<li class="current_line">' +current_line_start + '<div class="cursor"></div>' + current_line_end + "</li>");
+    editor.append('<li class="current-line">' +current_line_start + '<div class="cursor"></div>' + current_line_end + "</li>");
 
     for (var i in lines_end) {
         editor.append("<li>"+ lines_end[i] +"</li>");
