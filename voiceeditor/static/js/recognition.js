@@ -353,8 +353,8 @@ function delete_selection() {
         var last_line = (lines_start.length == window.selection.line_end);
         sel2 = create_line_selection(window.selection, first_line, last_line, window.current_line_end.length, window.current_line_start.length);
         sel1 = create_line_selection(window.selection, first_line, last_line, window.current_line_start.length, 0);
-        window.current_line_end = window.current_line_end.substring(0, sel.start) + window.current_line_end.substring(sel.end);
-        window.current_line_start = window.current_line_start.substring(0, sel.start) + window.current_line_start.substring(sel.end);
+        window.current_line_end = window.current_line_end.substring(0, sel2.start) + window.current_line_end.substring(sel2.end);
+        window.current_line_start = window.current_line_start.substring(0, sel1.start) + window.current_line_start.substring(sel1.end);
     }
 
     delete_start = lines_start.length;
@@ -379,4 +379,5 @@ function delete_selection() {
         lines_start.pop();
     }
     deselect();
+    refresh_editor();
 }

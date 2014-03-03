@@ -1,5 +1,6 @@
 var selecting = false;
 var select_direction = 0;
+var clip;
 
 function submit() {
     var all = lines_start.join('\n') + '\n' + current_line_start + current_line_end + '\n' + lines_end.join('\n')
@@ -196,7 +197,7 @@ function multi(what, count) {
     }
 }
 
-function select() {
+function start_selection() {
     if (!selecting) {
         window.selection = {
             'start': current_line_start.length,
@@ -266,3 +267,53 @@ function goto_end() {
 //         end();
 //     }
 // }
+
+function copy() {
+    clip = [];
+    for (var i in lines_start) {
+        if (window.selection!=null && i >= window.selection.line_start && i <= window.selection.line_end) {
+            var first_line = (i == window.selection.line_start);
+            var last_line = (i == window.selection.line_end);
+            sel = create_line_selection(window.selection, first_line, last_line, lines_start[i].length, 0);
+            clip.push(lines_start[i].substring(sel.start, sel.end));
+        }
+    }
+
+    if (window.selection != null && lines_start.length >= window.selection.line_start && lines_start.length <= window.selection.line_end) {
+        var first_line = (lines_start.length == window.selection.line_start);
+        var last_line = (lines_start.length == window.selection.line_end);
+        sel2 = create_line_selection(window.selection, first_line, last_line, window.current_line_end.length, window.current_line_start.length);
+        sel1 = create_line_selection(window.selection, first_line, last_line, window.current_line_start.length, 0);
+        clip.push(window.current_line_start.substring(sel1.start, sel1.end) + window.current_line_end.substring(sel2.start, sel2.end));
+    }
+
+    for (var i in lines_end) {
+        if (window.selection!=null && i + lines_start.length + 1 >= window.selection.line_start && i + lines_start.length + 1 <= window.selection.line_end) {
+            var first_line = (i + lines_start.length + 1 == window.selection.line_start);
+            var last_line = (i + lines_start.length + 1 == window.selection.line_end);
+            sel = create_line_selection(window.selection, first_line, last_line, lines_end[i].length, 0);
+            clip.push(lines_end[i].substring(sel.start, sel.end));
+        }
+    }
+
+    console.log(window.clip);
+}
+
+function cut() {
+    copy();
+    delete_selection();
+}
+
+function paste() {
+    delete_selection();
+    if (clip.length>0) {
+        var t = clip[0];
+        clip[0] = current_line_start + clip[0];
+        for (var i = 0; i<clip.length-1; i++) {
+            lines_start.push(clip[i]);
+        }
+        current_line_start = clip[clip.length-1];
+        clip[0] = t;
+    }
+    refresh_editor();
+}
