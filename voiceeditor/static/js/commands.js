@@ -2,6 +2,34 @@ var selecting = false;
 var select_direction = 0;
 var clip;
 
+function _load(what) {
+    lines = what.split("\n");
+    lines_start = [];
+    lines_end = [];
+    current_line_start = "";
+    current_line_end = "";
+    for (line in lines) {
+        lines_start.push(lines[line]);
+    }
+    refresh_editor();
+}
+
+function save() {
+    var all = lines_start.join('\n') + '\n' + current_line_start + current_line_end + '\n' + lines_end.join('\n')
+    console.log("Command: save");
+    var url = "/api/save/";
+    jQuery.post(url, {'task_id': window.task, 'content': all}, function(result) {
+        console.log(result);
+    });
+}
+
+function load() {
+    var url = "/api/load/";
+    jQuery.post(url, {'task_id': window.task}, function(result) {
+        _load(result);
+    });
+}
+
 function submit() {
     var all = lines_start.join('\n') + '\n' + current_line_start + current_line_end + '\n' + lines_end.join('\n')
     console.log("Command: submit");

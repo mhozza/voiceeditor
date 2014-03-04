@@ -74,22 +74,6 @@ class CommandMapping(models.Model):
         return str(self.editor.number) + ': ' + self.words\
             + ' -> ' + self.command.__str__()
 
-
-@python_2_unicode_compatible
-class Save(models.Model):
-    editor = models.ForeignKey(Editor)
-    name = models.CharField(max_length=100)
-    content = models.TextField()
-    version = models.IntegerField()
-
-    class Meta:
-        verbose_name = 'Save'
-        verbose_name_plural = 'Saves'
-
-    def __str__(self):
-        return str(self.editor.number) + ': '\
-            + self.name + '(' + str(self.version) + ')'
-
 @python_2_unicode_compatible
 class Task(models.Model):
     name = models.CharField(max_length=100)
@@ -97,3 +81,18 @@ class Task(models.Model):
 
     def __str__(self):
         return str(self.name)
+
+@python_2_unicode_compatible
+class Save(models.Model):
+    editor = models.ForeignKey(Editor)
+    content = models.TextField()
+    task = models.ForeignKey(Task)
+    time = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Save'
+        verbose_name_plural = 'Saves'
+
+    def __str__(self):
+        return str(self.editor.number) + ': '\
+            + str(self.task) + '(' + str(self.time) + ')'

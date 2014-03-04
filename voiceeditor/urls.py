@@ -11,5 +11,7 @@ urlpatterns = patterns('',
     url(r'^api/features/$', 'voiceeditor.views.get_features', name='features'),
     url(r'^api/mapping/$', 'voiceeditor.views.get_mapping', name='mapping'),
     url(r'^api/tasks/$', 'voiceeditor.views.get_tasks', name='tasks'),
+    url(r'^api/load/$', 'voiceeditor.views.get_load', name='apiload'),
+    url(r'^api/save/$', 'voiceeditor.views.save_task', name='save'),
     url(r'^admin/', include(admin.site.urls)),
 )

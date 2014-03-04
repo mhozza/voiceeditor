@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.core import serializers
-from models import Editor, Mapping, CommandMapping, Task
+from models import Editor, Mapping, CommandMapping, Task, Save
+import json
 
 
 def editor(request):
@@ -37,3 +38,21 @@ def get_commands(request):
 def get_tasks(request):
     data = serializers.serialize('json',Task.objects.all())
     return HttpResponse(data, content_type='application/json')
+
+def get_load(request):
+    editor = get_editor(request)
+    task_id = request.POST['task_id']
+    task = Task.objects.get(pk=task_id)
+    save = Save.objects.filter(editor=editor, task=task).order_by('-time')[0]
+
+    return HttpResponse(save.content)
+
+def save_task(request):
+    editor = get_editor(request)
+    task_id = request.POST['task_id']
+    content = request.POST['content']
+    task = Task.objects.get(pk=task_id)
+    save = Save(editor=editor,task=task,content=content)
+    save.save()
+
+    return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
