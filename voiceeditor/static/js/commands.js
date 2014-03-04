@@ -15,7 +15,11 @@ function _load(what) {
 }
 
 function save() {
-    var all = lines_start.join('\n') + '\n' + current_line_start + current_line_end + '\n' + lines_end.join('\n')
+    var all = lines_start.join('\n');
+    if (current_line_start != "" || current_line_end != "")
+        all += '\n' + current_line_start + current_line_end;
+    if (lines_end.length != 0)
+        all += '\n' + lines_end.join('\n');
     console.log("Command: save");
     var url = "/api/save/";
     jQuery.post(url, {'task_id': window.task, 'content': all}, function(result) {
