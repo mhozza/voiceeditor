@@ -8,18 +8,18 @@ function _load(what) {
     lines_end = [];
     current_line_start = "";
     current_line_end = "";
-    for (line in lines) {
-        lines_start.push(lines[line]);
-    }
+    for (var i = 0; i < lines.length - 1; i++)
+        lines_start.push(lines[i]);
+    current_line_start = lines[lines.length-1];
     refresh_editor();
 }
 
 function save() {
-    var all = lines_start.join('\n');
-    if (current_line_start != "" || current_line_end != "")
-        all += '\n' + current_line_start + current_line_end;
-    if (lines_end.length != 0)
-        all += '\n' + lines_end.join('\n');
+    var lines = [];
+    for (var line in lines_start) lines.push(lines_start[line]);
+    lines.push(current_line_start + current_line_end);
+    for (var line in lines_end) lines.push(lines_end[line]);
+    var all = lines.join('\n');
     console.log("Command: save");
     var url = "/api/save/";
     jQuery.post(url, {'task_id': window.task, 'content': all}, function(result) {
