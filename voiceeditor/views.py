@@ -10,7 +10,10 @@ def editor(request):
 
 
 def get_editor(request):
-    ip = request.META['REMOTE_ADDR']
+    if 'HTTP_X_REAL_IP' in request.META:
+        ip = request.META['HTTP_X_REAL_IP']
+    else:
+        ip = request.META['REMOTE_ADDR']
     return Editor.objects.get(ip=ip)
 
 
@@ -35,9 +38,11 @@ def get_commands(request):
     )
     return HttpResponse(data, content_type='application/json')
 
+
 def get_tasks(request):
-    data = serializers.serialize('json',Task.objects.all())
+    data = serializers.serialize('json', Task.objects.all())
     return HttpResponse(data, content_type='application/json')
+
 
 def get_load(request):
     editor = get_editor(request)
@@ -47,12 +52,16 @@ def get_load(request):
 
     return HttpResponse(save.content)
 
+
 def save_task(request):
     editor = get_editor(request)
     task_id = request.POST['task_id']
     content = request.POST['content']
     task = Task.objects.get(pk=task_id)
-    save = Save(editor=editor,task=task,content=content)
+    save = Save(editor=editor, task=task, content=content)
     save.save()
 
-    return HttpResponse(json.dumps({'status': 'ok'}), content_type='application/json')
+    return HttpResponse(
+        json.dumps({'status': 'ok'}),
+        content_type='application/json'
+    )
