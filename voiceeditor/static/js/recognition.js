@@ -60,7 +60,17 @@ $(document).ready(function() {
     recognition.start();
     refresh_lexer();
     refresh_editor();
+    $('#voice_input_box').affix( { offset: { top: 0, bottom : 0}});
 });
+
+$(window).scroll(function () {
+    $('#voice_input_box.affix').width($('#voice_input_box_placeholder').width());
+});
+
+$(window).resize(function () {
+    $('#voice_input_box.affix').width($('#voice_input_box_placeholder').width());
+});
+
 
 // $(document).bind('contextmenu', function(e) {
 //     e.stopPropagation();
