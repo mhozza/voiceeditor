@@ -9,6 +9,7 @@ var current_line_start = '';
 var current_line_end = '';
 var lines_end = [];
 var selection = null;
+var editor_lang = 'pas';
 window.task = 1;
 
 recognition.continuous = true;
@@ -35,6 +36,7 @@ recognition.onresult = function(event) {
 };
 
 recognition.onerror = function(event) {
+    console.log('error', event);
     if (event.error == 'no-speech') {
         console.log('info_no_speech');
     }
@@ -42,18 +44,19 @@ recognition.onerror = function(event) {
         console.log('info_no_microphone');
     }
     if (event.error == 'not-allowed') {
-
+        console.log('not_allowed');
     }
 };
 recognition.onend = function() {
-    recognition.start()
+    // console.log('finished');
+    // setTimeout('recognition.start()', 1000);
+    recognition.start();
 }
 $(document).ready(function() {
     update_tables();
     final_transcript = '';
     recognition.lang = 'en-US';
     recognition.lang = 'sk-SK';
-    $('#lang').text(recognition.lang);
     recognition.start();
     refresh_lexer();
     refresh_editor();
@@ -322,9 +325,14 @@ function refresh_editor() {
         editor.append("<li>"+ text +"</li>");
     }
 
+    $('#lang').text(recognition.lang.substring(0,2));
+    $('#editor_lang').text(editor_lang);
+
     if (window.features != null && 'highlight' in window.features) {
         $('#editor').each(function(i, e) {hljs.highlightBlock(e)});
     }
+
+
 }
 
 function delete_selection() {

@@ -35,9 +35,9 @@ function load() {
 }
 
 function submit() {
-    var all = lines_start.join('\n') + '\n' + current_line_start + current_line_end + '\n' + lines_end.join('\n')
+    var all = lines_start.join('\n') + '\n' + current_line_start + current_line_end + '\n' + lines_end.join('\n');
     console.log("Command: submit");
-    var url = "/submit/" + window.task + "/"
+    var url = "/submit/" + window.task + "/";
     jQuery.post(url, {'data': all, 'language': '.cc'}, function(result) {
         console.log(result);
     });
@@ -346,6 +346,29 @@ function paste() {
         }
         current_line_start = clip[clip.length-1];
         clip[0] = t;
+    }
+    refresh_editor();
+}
+
+function set_programming_language(lang) {
+    if (lang.trim().toLowerCase()[0] == 'p') {
+        editor_lang = 'pas';
+    } else {
+        editor_lang = 'cpp';
+    }
+    refresh_editor();
+}
+
+function set_language(lang) {
+    if (lang.trim().toLowerCase()[0] == 's') {
+        recognition.stop();
+        recognition.lang = 'sk-SK';
+        recognition.start();
+
+    } else {
+        recognition.stop();
+        recognition.lang = 'en-US';
+        recognition.start();
     }
     refresh_editor();
 }
