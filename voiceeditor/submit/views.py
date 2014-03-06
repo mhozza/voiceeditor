@@ -11,11 +11,11 @@ from django.core.urlresolvers import reverse
 from django.template import RequestContext
 from django.conf import settings
 from voiceeditor.submit.models import Submit
-from voiceeditor.submit.helpers import write_file, process_submit_raw, get_path_raw, update_submit
+from voiceeditor.submit.helpers import write_file, process_submit_raw, get_path_raw, update_submit, get_compilation_error
 import os
 import xml.etree.ElementTree as ET
 import json
-from voiceeditor.models import Editor
+from voiceeditor.models import Editor, Task
 
 def task_submit_post(request, task_id):
     '''Spracovanie uploadnuteho submitu'''
@@ -44,3 +44,27 @@ def task_submit_post(request, task_id):
                  protocol_id=submit_id)
     sub.save()
     return HttpResponse(json.dumps({'id': submit_id}), content_type='application/json')
+
+def task_get_result(request):
+    '''Zistenie vysledku submitu'''
+
+    user_ip = request.META['REMOTE_ADDR']
+    # TODO SECURITY?
+    submit_id = request.POST['submit_id']
+    sub = get_object_or_404(Submit, protocol_id=submit_id)
+    editor = get_object_or_404(Editor, ip=user_ip)
+    update_submit(sub)
+    if (sub.testing_status == 'in queue'):
+        data = {'status': 'in queue'}
+    else:
+        data = {'status': 'finished'}
+        if (sub.tester_response) == 'CERR':
+            data['msg'] = get_compilation_error(sub)
+        data['result'] = sub.tester_response
+        if (data['result'] == 'OK'):
+            # flag the task as complete for this editor
+            task = Task.objects.get(pk=int(sub.task))
+            if editor not in task.editors.all():
+                task.editors.add(editor)
+            task.save()
+    return HttpResponse(json.dumps(data), content_type='application/json')

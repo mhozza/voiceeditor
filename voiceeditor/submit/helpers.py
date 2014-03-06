@@ -5,6 +5,7 @@ import os
 import random
 import socket
 import xml.etree.ElementTree as ET
+import json
 
 
 RESPONSE_ERROR = 'CERR'
@@ -106,48 +107,32 @@ def process_submit_raw(data, contest_id, task_id, language, user_id):
     write_file(raw, os.path.join(path, submit_id + '.raw'))
 
     # Send RAW for testing (uncomment when deploying)
-    # post_submit(raw)
+    post_submit(raw)
 
     # Return submit ID
     return submit_id
 
 def update_submit(submit):
-    '''Zistí, či už je dotestované, ak hej, tak updatne databázu.
-
-    Ak je dotestované, tak do zložky so submitmi testovač nahral súbor
-    s rovnakým názvom ako má submit len s príponou .protokol
-    (nastaviteľné v settings/common.py)
-
-    Tento súbor obsahuje výstup testovača (v XML) a treba ho parse-núť
-    '''
+    ''' zisti ci je dotestovane a zapise result, ak je ok, prida bod.
+    vrati true/false == je dotestovane alebo ne.'''
     protocol_path = submit.filepath.rsplit(
         '.', 1)[0] + settings.PROTOCOL_FILE_EXTENSION
     if os.path.exists(protocol_path):
-        tree = ET.parse(protocol_path)
-        # Ak kompilátor vyhlási chyby, testovač ich vráti v tagu <compileLog>
-        # Ak takýto tag existuje, výsledok je chyba pri testovaní a 0 bodov.
-        clog = tree.find("compileLog")
-        if clog is not None:
-            result = RESPONSE_ERROR
-            points = 0
+        protfile = open(protocol_path)
+        data = json.loads(protfile.readline())
+        if (data['error'] == 'OK'):
+            submit.points = 1
         else:
-            # Pre každý vstup kompilátor vyprodukuje tag <test>, všetky <test>-y
-            # sú v tag-u <runLog>. Výsledok je buď OK, alebo prvý nájdený druh
-            # chyby.
-            runlog = tree.find("runLog")
-            result = RESPONSE_OK
-            for test in runlog:
-                if test.tag != 'test':
-                    continue
-                test_result = test[2].text
-                if test_result != RESPONSE_OK:
-                    result = test_result
-                    break
-            # Na konci testovača je v tagu <score> uložené percento získaných
-            # bodov.
-            score = int(float(tree.find("runLog/score").text))
-            points = (score) // 100
-        submit.points = points
-        submit.tester_response = result
+            submit.points = 0
         submit.testing_status = 'finished'
+        submit.tester_response = data['error']
         submit.save()
+        return True
+    return False
+
+def get_compilation_error(submit):
+    protocol_path = submit.filepath.rsplit(
+        '.', 1)[0] + settings.PROTOCOL_FILE_EXTENSION
+    protfile = open(protocol_path)
+    data = json.loads(protfile.readline())
+    return data['msg']
