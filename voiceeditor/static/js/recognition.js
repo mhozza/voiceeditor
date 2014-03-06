@@ -53,6 +53,14 @@ recognition.onend = function() {
     // setTimeout('recognition.start()', 1000);
     recognition.start();
 }
+
+function htmlEncode(value){
+  //create a in-memory div, set it's inner text(which jQuery automatically encodes)
+  //then grab the encoded contents back out.  The div never exists on the page.
+  return $('<div/>').text(value).html();
+}
+
+
 $(document).ready(function() {
     update_tables();
     final_transcript = '';
@@ -205,6 +213,7 @@ function update_tables() {
       set_commands(data);
       refresh_lexer();
     });
+
     $.ajax({
         url: "/api/tasks/",
     }).success(function(data) {
@@ -300,7 +309,6 @@ function insert_text(text) {
     }
     current_line_start += text;
     refresh_editor();
-
 }
 
 function select(selection, linetext) {
@@ -337,9 +345,11 @@ function refresh_editor() {
         if (window.selection!=null && i >= window.selection.line_start && i <= window.selection.line_end) {
             var first_line = (i == window.selection.line_start);
             var last_line = (i == window.selection.line_end);
-            text = select(create_line_selection(window.selection, first_line, last_line, text.length, 0), text);
+            text = select(create_line_selection(window.selection, first_line, last_line, text.length, 0), htmlEncode(text));
+        } else {
+            text = htmlEncode(text)
         }
-        editor.append("<li>"+ text +"</li>");
+        editor.append("<li>"+text +"</li>");
     }
 
     var text1 = window.current_line_start;
@@ -347,8 +357,11 @@ function refresh_editor() {
     if (window.selection != null && lines_start.length >= window.selection.line_start && lines_start.length <= window.selection.line_end) {
         var first_line = (lines_start.length == window.selection.line_start);
         var last_line = (lines_start.length == window.selection.line_end);
-        text2 = select(create_line_selection(window.selection, first_line, last_line, text2.length, text1.length), text2);
-        text1 = select(create_line_selection(window.selection, first_line, last_line, text1.length, 0), text1);
+        text2 = select(create_line_selection(window.selection, first_line, last_line, text2.length, text1.length), htmlEncode(text2));
+        text1 = select(create_line_selection(window.selection, first_line, last_line, text1.length, 0), htmlEncode(text1));
+    } else {
+        text1 = htmlEncode(text1);
+        text2 = htmlEncode(text2);
     }
 
     editor.append(
@@ -364,8 +377,10 @@ function refresh_editor() {
             var first_line = (i + lines_start.length + 1 == window.selection.line_start);
             var last_line = (i + lines_start.length + 1 == window.selection.line_end);
             text = select(create_line_selection(window.selection, first_line, last_line, text.length, 0), text);
+        } else {
+            text = htmlEncode(text)
         }
-        editor.append("<li>"+ text +"</li>");
+        editor.append("<li>"+text +"</li>");
     }
 
     $('#lang').text(recognition.lang.substring(0,2));

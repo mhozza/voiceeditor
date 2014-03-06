@@ -22,7 +22,7 @@ class Feature(models.Model):
 class Editor(models.Model):
     number = models.IntegerField()
     ip = models.IPAddressField()
-    features = models.ManyToManyField(Feature)
+    features = models.ManyToManyField(Feature, blank=True)
 
     class Meta:
         verbose_name = 'Editor'
@@ -51,7 +51,7 @@ class Mapping(models.Model):
 class SayMapping(models.Model):
     words = models.CharField(max_length=200)
     say = models.CharField(max_length=200)
-    chars = models.CharField(max_length=200)
+    chars = models.CharField(max_length=200, blank=True)
 
     class Meta:
         verbose_name = 'SayMapping'
