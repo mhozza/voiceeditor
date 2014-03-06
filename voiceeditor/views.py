@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.core import serializers
-from models import Editor, Mapping, CommandMapping, Task, Save
+from models import Editor, Mapping, CommandMapping, Task, Save, SayMapping
 import json
 
 
@@ -20,6 +20,11 @@ def get_editor(request):
 def get_mapping(request):
     editor = get_editor(request)
     data = serializers.serialize('json', Mapping.objects.filter(editor=editor))
+    return HttpResponse(data, content_type='application/json')
+
+
+def get_saymapping(request):
+    data = serializers.serialize('json', SayMapping.objects.all())
     return HttpResponse(data, content_type='application/json')
 
 

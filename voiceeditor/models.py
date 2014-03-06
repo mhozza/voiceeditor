@@ -48,6 +48,19 @@ class Mapping(models.Model):
 
 
 @python_2_unicode_compatible
+class SayMapping(models.Model):
+    words = models.CharField(max_length=200)
+    say = models.CharField(max_length=200)
+
+    class Meta:
+        verbose_name = 'SayMapping'
+        verbose_name_plural = 'SayMappings'
+
+    def __str__(self):
+        return self.words + ' -> ' + self.say
+
+
+@python_2_unicode_compatible
 class Command(models.Model):
     function = models.CharField(max_length=50)
     argnum = models.IntegerField(default=0)
@@ -74,6 +87,7 @@ class CommandMapping(models.Model):
         return str(self.editor.number) + ': ' + self.words\
             + ' -> ' + self.command.__str__()
 
+
 @python_2_unicode_compatible
 class Task(models.Model):
     name = models.CharField(max_length=100)
@@ -81,6 +95,7 @@ class Task(models.Model):
 
     def __str__(self):
         return str(self.name)
+
 
 @python_2_unicode_compatible
 class Save(models.Model):

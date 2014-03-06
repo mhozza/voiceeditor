@@ -1,6 +1,7 @@
 var recognition = new webkitSpeechRecognition();
 var lexer = null;
 var mapping = null;
+var saymapping = null;
 var commands = null;
 var features = null;
 var refresh_time = 10000;
@@ -92,6 +93,10 @@ function set_mapping(value) {
     window.mapping = value;
 }
 
+function set_saymapping(value) {
+    window.saymapping = value;
+}
+
 function set_commands(value) {
     window.commands = value;
 }
@@ -105,6 +110,16 @@ function create_mapping_lexeme_function(chars) {
         return {
             'type': 'mapping',
             'chars': chars
+        }
+    }
+}
+
+function create_saymapping_lexeme_function(chars) {
+    return function(lexeme) {
+        return {
+            'type': 'saymapping',
+            'chars': '',
+            'say': chars
         }
     }
 }
@@ -145,6 +160,12 @@ function refresh_lexer() {
         var chars = window.mapping[i].fields.chars;
         window.lexer.addRule(re, create_mapping_lexeme_function(chars));
     }
+
+    for (var i in window.saymapping) {
+        re = new RegExp(window.saymapping[i].fields.words, 'i');
+        var chars = window.saymapping[i].fields.say;
+        window.lexer.addRule(re, create_saymapping_lexeme_function(chars));
+    }
 }
 
 function set_features(value) {
@@ -171,6 +192,13 @@ function update_tables() {
     });
 
     $.ajax({
+      url: "/api/saymapping/",
+    }).success(function(data) {
+      set_saymapping(data);
+      refresh_lexer();
+    });
+
+    $.ajax({
       url: "/api/commands/",
     }).success(function(data) {
       set_commands(data);
@@ -185,6 +213,7 @@ function update_tables() {
     console.log(window.mapping);
     console.log(window.features);
     console.log(window.commands);
+    console.log(window.saymapping);
     console.log(window.tasks);
     window.setTimeout("update_tables()", refresh_time);
 }
@@ -212,6 +241,9 @@ function process_input(final_transcript) {
         insert_text(lexeme.chars);
         if (lexeme.type == 'command') {
             process_command(lexeme.fname, lexeme.args);
+        }
+        if (lexeme.type == 'saymapping') {
+            say(lexeme.say);
         }
     }
 }
@@ -398,4 +430,18 @@ function delete_selection() {
     }
     deselect();
     refresh_editor();
+}
+
+function say(text) {
+    console.log('say:', text);
+    var msg = new SpeechSynthesisUtterance();
+    var voices = window.speechSynthesis.getVoices();
+    msg.lang = 'sk-SK';
+    msg.voice = voices[67]; // Note: some voices don't support altering params
+    msg.voiceURI = 'native';
+    msg.rate = 1; // 0.1 to 10
+    msg.pitch = .7; //0 to 2
+    msg.volume = 1; // 0 to 1
+    msg.text = text;
+    speechSynthesis.speak(msg);
 }
