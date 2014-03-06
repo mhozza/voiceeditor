@@ -36,7 +36,7 @@ class Editor(models.Model):
 class Mapping(models.Model):
     editor = models.ForeignKey(Editor)
     words = models.CharField(max_length=200)
-    chars = models.CharField(max_length=20)
+    chars = models.CharField(max_length=80)
 
     class Meta:
         verbose_name = 'Mapping'
@@ -51,13 +51,14 @@ class Mapping(models.Model):
 class SayMapping(models.Model):
     words = models.CharField(max_length=200)
     say = models.CharField(max_length=200)
+    chars = models.CharField(max_length=200)
 
     class Meta:
         verbose_name = 'SayMapping'
         verbose_name_plural = 'SayMappings'
 
     def __str__(self):
-        return self.words + ' -> ' + self.say
+        return self.words + ' -> ' + self.say + '(' + self.chars + ')'
 
 
 @python_2_unicode_compatible

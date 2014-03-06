@@ -114,12 +114,12 @@ function create_mapping_lexeme_function(chars) {
     }
 }
 
-function create_saymapping_lexeme_function(chars) {
+function create_saymapping_lexeme_function(chars, say) {
     return function(lexeme) {
         return {
             'type': 'saymapping',
-            'chars': '',
-            'say': chars
+            'chars': chars,
+            'say': say
         }
     }
 }
@@ -163,8 +163,9 @@ function refresh_lexer() {
 
     for (var i in window.saymapping) {
         re = new RegExp(window.saymapping[i].fields.words, 'i');
-        var chars = window.saymapping[i].fields.say;
-        window.lexer.addRule(re, create_saymapping_lexeme_function(chars));
+        var say = window.saymapping[i].fields.say;
+        var chars = window.saymapping[i].fields.chars;
+        window.lexer.addRule(re, create_saymapping_lexeme_function(chars, say));
     }
 }
 
