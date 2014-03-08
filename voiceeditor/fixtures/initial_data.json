@@ -164,5 +164,21 @@
       "function": "paste",
       "argnum": 0
     }
+  },
+  {
+    "pk": 1,
+    "model": "voiceeditor.randommessage",
+    "fields": {
+      "say": "Programuješ ako farmár"
+    }
+  },
+  {
+    "pk": 1,
+    "model": "voiceeditor.saymapping",
+    "fields": {
+      "say": "sám si chudák",
+      "chars": "",
+      "words": "ty si chudák"
+    }
   }
 ]
