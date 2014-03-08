@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.core import serializers
-from models import Editor, Mapping, CommandMapping, Task, Save, SayMapping
+from models import Editor, Mapping, CommandMapping, Task, Save, SayMapping,\
+    RandomMessage
+
 import json
 
 
@@ -25,6 +27,13 @@ def get_mapping(request):
 
 def get_saymapping(request):
     data = serializers.serialize('json', SayMapping.objects.all())
+    return HttpResponse(data, content_type='application/json')
+
+
+def get_randommessages(request):
+    data = json.dumps(
+        [x['say'] for x in RandomMessage.objects.all().values('say')]
+    )
     return HttpResponse(data, content_type='application/json')
 
 

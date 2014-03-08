@@ -112,3 +112,15 @@ class Save(models.Model):
     def __str__(self):
         return str(self.editor.number) + ': '\
             + str(self.task) + '(' + str(self.time) + ')'
+
+
+@python_2_unicode_compatible
+class RandomMessage(models.Model):
+    say = models.CharField(max_length=200)
+
+    class Meta:
+        verbose_name = 'RandomMessage'
+        verbose_name_plural = 'RandomMessages'
+
+    def __str__(self):
+        return self.say

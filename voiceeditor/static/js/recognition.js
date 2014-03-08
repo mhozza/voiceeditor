@@ -4,6 +4,8 @@ var mapping = null;
 var saymapping = null;
 var commands = null;
 var features = null;
+var random_messages = null;
+
 var refresh_time = 10000;
 var lines_start = [];
 var current_line_start = '';
@@ -12,6 +14,11 @@ var lines_end = [];
 var selection = null;
 var editor_lang = 'pas';
 window.task = 1;
+var minrmtime = 120000;
+// var minrmtime = 0;
+var maxrmtime = 480000;
+// var maxrmtime = 1000;
+
 
 recognition.continuous = true;
 recognition.interimResults = true;
@@ -70,6 +77,7 @@ $(document).ready(function() {
     refresh_lexer();
     refresh_editor();
     $('#voice_input_box').affix( { offset: { top: 0, bottom : 0}});
+    setTimeout('sayrandom()', minrmtime + Math.floor(Math.random()*maxrmtime));
 });
 
 $(window).scroll(function () {
@@ -184,6 +192,10 @@ function set_features(value) {
     }
 }
 
+function set_randommessages(value) {
+    window.random_messages = value;
+}
+
 function update_tables() {
     $.ajax({
       url: "/api/features/",
@@ -220,10 +232,18 @@ function update_tables() {
         set_tasks(data);
         update_tasklist();
     });
+
+    $.ajax({
+        url: "/api/randommessages/",
+    }).success(function(data) {
+        set_randommessages(data);
+    });
+
     console.log(window.mapping);
     console.log(window.features);
     console.log(window.commands);
     console.log(window.saymapping);
+    console.log(window.random_messages);
     console.log(window.tasks);
     window.setTimeout("update_tables()", refresh_time);
 }
@@ -389,8 +409,6 @@ function refresh_editor() {
     if (window.features != null && 'highlight' in window.features) {
         $('#editor').each(function(i, e) {hljs.highlightBlock(e)});
     }
-
-
 }
 
 function delete_selection() {
@@ -460,4 +478,12 @@ function say(text) {
     msg.volume = 1; // 0 to 1
     msg.text = text;
     speechSynthesis.speak(msg);
+}
+
+function sayrandom() {
+    if (random_messages != null) {
+        message = random_messages[Math.floor(Math.random()*random_messages.length)];
+        say(message);
+    }
+    setTimeout('sayrandom()', minrmtime + Math.floor(Math.random()*maxrmtime));
 }
