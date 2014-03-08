@@ -2,6 +2,13 @@ var selecting = false;
 var select_direction = 0;
 var clip;
 
+function _alert(what, input_class) {
+    if (input_class === undefined) input_class = 'alert-success'
+    $("#voice_input_box").append(
+        $('<div class="alert alert-block ' + input_class + '"><button type="button" class="close" data-dismiss="alert">&times;</button>'+what+'</div>')
+    );
+}
+
 function _load(what) {
     lines = what.split("\n");
     lines_start = [];
@@ -49,9 +56,13 @@ function submit() {
                 if (res['status'] === 'finished') {
                     have_result = true;
                     if (res['result'] == 'CERR')
-                        alert("Compilation error: " + "\n" + res['msg']);
+                        _alert("Compilation error: " + "\n" + res['msg'], "alert-danger");
                     else {
-                        alert("Result: " + res['result']);
+                        if (res['result'] == 'OK') {
+                            _alert("Result: " + res['result'], "alert-success");
+                        } else {
+                            _alert("Result: " + res['result'], "alert-warning");
+                        }
                     }
                 } else {
                     setTimeout(testfunc, 1000);

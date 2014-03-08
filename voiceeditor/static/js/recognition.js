@@ -5,6 +5,7 @@ var saymapping = null;
 var commands = null;
 var features = null;
 var random_messages = null;
+var editor_id = null;
 
 var refresh_time = 10000;
 var lines_start = [];
@@ -239,6 +240,12 @@ function update_tables() {
         set_randommessages(data);
     });
 
+    $.ajax({
+        url: "/api/editorid/",
+    }).success(function(data) {
+        editor_id = data;
+    });
+
     console.log(window.mapping);
     console.log(window.features);
     console.log(window.commands);
@@ -252,7 +259,12 @@ function update_tasklist() {
     $("#task-list").empty();
     for (var task in window.tasks) {
         // Add task to tasklist
-        $("#task-list").append('<li><a id="task-' + task + '">' + window.tasks[task].fields.name + '</a></li>');
+        if ($.inArray(parseInt(editor_id), window.tasks[task].fields.editors) != -1) {
+            var styl="style=color:green;";
+        } else {
+            var styl = '';
+        }
+        $("#task-list").append('<li><a id="task-' + task + '"' + styl + '>' + window.tasks[task].fields.name + '</a></li>');
         $("#task-"+task).click(function() {
             var id = $(this)[0].id.substr(5);
             window.task = window.tasks[id].pk;
