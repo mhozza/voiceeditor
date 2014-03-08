@@ -92,6 +92,6 @@ STATIC_URL = '/static/'
 
 ## Submit variables
 TESTER_URL = 'localhost'
-TESTER_PORT = 12347
+TESTER_PORT = 9998
 SUBMIT_PATH = '/tmp/submits/'
 PROTOCOL_FILE_EXTENSION = '.protokol'

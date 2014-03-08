@@ -40,6 +40,25 @@ function submit() {
     var url = "/submit/" + window.task + "/";
     jQuery.post(url, {'data': all, 'language': '.cc'}, function(result) {
         console.log(result);
+        // begin result polling, then alert the result
+        var have_result = false;
+        var testurl = '/submit/test/'
+        var testfunc = function() {
+            console.log('checking for result');
+            jQuery.post(testurl, {'submit_id': result['id']}, function(res) {
+                if (res['status'] === 'finished') {
+                    have_result = true;
+                    if (res['result'] == 'CERR')
+                        alert("Compilation error: " + "\n" + res['msg']);
+                    else {
+                        alert("Result: " + res['result']);
+                    }
+                } else {
+                    setTimeout(testfunc, 1000);
+                }
+            });
+        };
+        setTimeout(testfunc, 1000);
     });
 }
 

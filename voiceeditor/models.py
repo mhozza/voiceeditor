@@ -93,6 +93,7 @@ class CommandMapping(models.Model):
 class Task(models.Model):
     name = models.CharField(max_length=100)
     content = models.TextField()
+    editors = models.ManyToManyField(Editor, blank=True)
 
     def __str__(self):
         return str(self.name)
