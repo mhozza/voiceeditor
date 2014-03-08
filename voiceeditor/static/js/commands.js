@@ -381,9 +381,14 @@ function paste() {
 }
 
 function set_programming_language(lang) {
+    editor = $('#editor');
     if (lang.trim().toLowerCase()[0] == 'p') {
+        editor.removeClass('language-cpp');
+        editor.addClass('language-delphi');
         editor_lang = 'pas';
     } else {
+        editor.removeClass('language-delphi');
+        editor.addClass('language-cpp');
         editor_lang = 'cpp';
     }
     refresh_editor();

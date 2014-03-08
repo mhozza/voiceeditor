@@ -20,6 +20,11 @@ var minrmtime = 120000;
 var maxrmtime = 480000;
 // var maxrmtime = 1000;
 
+//ToDo: autosave
+//priklady
+//spaceremove
+//hovorit message
+//richtext v ulohach
 
 recognition.continuous = true;
 recognition.interimResults = true;
@@ -70,9 +75,10 @@ function htmlEncode(value){
 
 
 $(document).ready(function() {
+    set_programming_language('pas');
     update_tables();
     final_transcript = '';
-    recognition.lang = 'en-US';
+    // recognition.lang = 'en-US';
     recognition.lang = 'sk-SK';
     recognition.start();
     refresh_lexer();
@@ -379,7 +385,7 @@ function refresh_editor() {
             var last_line = (i == window.selection.line_end);
             text = select(create_line_selection(window.selection, first_line, last_line, text.length, 0), htmlEncode(text));
         } else {
-            text = htmlEncode(text)
+            text = htmlEncode(text);
         }
         editor.append("<li>"+text +"</li>");
     }
@@ -410,7 +416,7 @@ function refresh_editor() {
             var last_line = (i + lines_start.length + 1 == window.selection.line_end);
             text = select(create_line_selection(window.selection, first_line, last_line, text.length, 0), text);
         } else {
-            text = htmlEncode(text)
+            text = htmlEncode(text);
         }
         editor.append("<li>"+text +"</li>");
     }
