@@ -68,9 +68,11 @@ def get_load(request):
         editor = get_editor(request)
         task_id = request.POST['task_id']
         task = Task.objects.get(pk=task_id)
-        save = Save.objects.filter(editor=editor, task=task).order_by('-time')[0]
+        print task
+	save = Save.objects.filter(editor=editor, task=task).order_by('-time')[0]
+	print save
         return HttpResponse(save.content)
-    except ObjectDoesNotExist:
+    except:
         return HttpResponse('')
 
 
