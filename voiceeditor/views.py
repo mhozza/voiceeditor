@@ -9,14 +9,24 @@ import json
 
 
 def editor(request):
-    return render(request, 'voiceeditor/editor.html')
+    try:
+        get_editor(request)
+        return render(request, 'voiceeditor/editor.html')
+    except:
+        template_data = {'ip': get_ip(request)}
+        return render(request, 'voiceeditor/ip.html', template_data)
 
 
-def get_editor(request):
+def get_ip(request):
     if 'HTTP_X_REAL_IP' in request.META:
         ip = request.META['HTTP_X_REAL_IP']
     else:
         ip = request.META['REMOTE_ADDR']
+    return ip
+
+
+def get_editor(request):
+    ip = get_ip(request)
     return Editor.objects.get(ip=ip)
 
 
