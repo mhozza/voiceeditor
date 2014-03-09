@@ -21,12 +21,16 @@ function _load(what) {
     refresh_editor();
 }
 
-function save() {
+function get_all() {
     var lines = [];
     for (var line in lines_start) lines.push(lines_start[line]);
     lines.push(current_line_start + current_line_end);
     for (var line in lines_end) lines.push(lines_end[line]);
-    var all = lines.join('\n');
+    return lines.join('\n');
+}
+
+function save() {
+    var all = get_all();
     console.log("Command: save");
     var url = "/api/save/";
     jQuery.post(url, {'task_id': window.task, 'content': all}, function(result) {
@@ -42,7 +46,8 @@ function load() {
 }
 
 function submit() {
-    var all = lines_start.join('\n') + '\n' + current_line_start + current_line_end + '\n' + lines_end.join('\n');
+    var all = get_all();
+    if (all == "") return;
     console.log("Command: submit");
     var url = "/submit/" + window.task + "/";
     jQuery.post(url, {'data': all, 'language': '.cc'}, function(result) {
@@ -50,6 +55,7 @@ function submit() {
         // begin result polling, then alert the result
         var have_result = false;
         var testurl = '/submit/test/'
+        _alert("Submit successful!", "alert-info");
         var testfunc = function() {
             console.log('checking for result');
             jQuery.post(testurl, {'submit_id': result['id']}, function(res) {
