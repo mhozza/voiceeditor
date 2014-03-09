@@ -14,6 +14,7 @@ var current_line_end = '';
 var lines_end = [];
 var selection = null;
 var editor_lang = 'pas';
+var displayed_task = null;
 window.task = 1;
 var minrmtime = 120000;
 // var minrmtime = 0;
@@ -238,6 +239,9 @@ function update_tables() {
     }).success(function(data) {
         set_tasks(data);
         update_tasklist();
+        if (displayed_task == null) {
+            set_task(0);
+        }
     });
 
     $.ajax({
@@ -263,6 +267,13 @@ function update_tables() {
 
 var markdown = new Markdown.Converter();
 
+function set_task(id) {
+    window.task = window.tasks[id].pk;
+    $("#task-name").text(window.tasks[id].fields.name);
+    $("#task-content").html(markdown.makeHtml(window.tasks[id].fields.content));
+    displayed_task = id;
+}
+
 function update_tasklist() {
     $("#task-list").empty();
     for (var task in window.tasks) {
@@ -275,9 +286,7 @@ function update_tasklist() {
         $("#task-list").append('<li><a id="task-' + task + '"' + styl + '>' + window.tasks[task].fields.name + '</a></li>');
         $("#task-"+task).click(function() {
             var id = $(this)[0].id.substr(5);
-            window.task = window.tasks[id].pk;
-            $("#task-name").text(window.tasks[id].fields.name);
-            $("#task-content").html(markdown.makeHtml(window.tasks[id].fields.content));
+            set_task(id);
         });
     }
 }
