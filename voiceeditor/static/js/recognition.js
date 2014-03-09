@@ -19,6 +19,7 @@ var minrmtime = 120000;
 // var minrmtime = 0;
 var maxrmtime = 480000;
 // var maxrmtime = 1000;
+var autosave_time = 60000;
 
 //ToDo: autosave
 //priklady
@@ -83,6 +84,8 @@ $(document).ready(function() {
     recognition.start();
     refresh_lexer();
     refresh_editor();
+    load();
+    setTimeout('autosave()', autosave_time);
     $('#voice_input_box').affix( { offset: { top: 0, bottom : 0}});
     setTimeout('sayrandom()', minrmtime + Math.floor(Math.random()*maxrmtime));
 });
@@ -111,6 +114,13 @@ $(document).bind('selectstart', function(e) {
     e.stopImmediatePropagation();
     return false;
 });
+
+function autosave() {
+    if (window.features != null && 'autosave' in window.features) {
+        save();
+    }
+    setTimeout('autosave()', autosave_time);
+}
 
 function set_mapping(value) {
     window.mapping = value;

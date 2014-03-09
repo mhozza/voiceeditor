@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.core import serializers
 from models import Editor, Mapping, CommandMapping, Task, Save, SayMapping,\
     RandomMessage
+from django.core.exceptions import ObjectDoesNotExist
 
 import json
 
@@ -63,12 +64,14 @@ def get_tasks(request):
 
 
 def get_load(request):
-    editor = get_editor(request)
-    task_id = request.POST['task_id']
-    task = Task.objects.get(pk=task_id)
-    save = Save.objects.filter(editor=editor, task=task).order_by('-time')[0]
-
-    return HttpResponse(save.content)
+    try:
+        editor = get_editor(request)
+        task_id = request.POST['task_id']
+        task = Task.objects.get(pk=task_id)
+        save = Save.objects.filter(editor=editor, task=task).order_by('-time')[0]
+        return HttpResponse(save.content)
+    except ObjectDoesNotExist:
+        return HttpResponse('')
 
 
 def save_task(request):
