@@ -112,7 +112,7 @@ class Save(models.Model):
 
     def __str__(self):
         return str(self.editor.number) + ': '\
-            + str(self.task) + '(' + str(self.time) + ')'
+            + self.task + '(' + str(self.time) + ')'
 
 
 @python_2_unicode_compatible
