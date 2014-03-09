@@ -22,7 +22,7 @@ var maxrmtime = 480000;
 
 //ToDo: autosave
 //priklady
-//spaceremove
+// spaceremove
 //hovorit message
 //richtext v ulohach
 
@@ -284,8 +284,11 @@ function process_input(final_transcript) {
     lexer.setInput(final_transcript);
     while (1) {
         lexeme = lexer.lex();
-        console.log(lexeme);
         if (typeof(lexeme) == "undefined") break;
+        if (lexeme.type == 'char' && window.features != null && 'skip_space' in window.features && lexeme.chars==" ") {
+            console.log('skipping space');
+            continue;
+        }
         insert_text(lexeme.chars);
         if (lexeme.type == 'command') {
             process_command(lexeme.fname, lexeme.args);
@@ -341,9 +344,6 @@ function insert_text(text) {
     delete_selection();
     if (text == '') {
         return;
-    }
-    if (features.autospace) {
-        text = text + ' ';
     }
     current_line_start += text;
     refresh_editor();
@@ -402,8 +402,13 @@ function refresh_editor() {
         text2 = htmlEncode(text2);
     }
 
+    var cl_class='';
+    if (window.features != null && 'current_line' in window.features) {
+        cl_class='current-line';
+    }
+
     editor.append(
-        '<li class="current-line">'
+        '<li class="'+cl_class+'">'
         + text1
         + '<div class="cursor"></div>'
         + text2

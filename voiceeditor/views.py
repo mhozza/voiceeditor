@@ -18,8 +18,10 @@ def get_editor(request):
         ip = request.META['REMOTE_ADDR']
     return Editor.objects.get(ip=ip)
 
+
 def get_editor_id(request):
     return HttpResponse(get_editor(request).pk)
+
 
 def get_mapping(request):
     editor = get_editor(request)
