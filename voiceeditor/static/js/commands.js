@@ -32,6 +32,7 @@ function get_all() {
 function save() {
     var all = get_all();
     console.log("Command: save");
+    say('Si uložil!');
     var url = "/api/save/";
     jQuery.post(url, {'task_id': window.task, 'content': all}, function(result) {
         console.log(result);
@@ -40,6 +41,7 @@ function save() {
 
 function load() {
     var url = "/api/load/";
+    say('Si načítal!');
     jQuery.post(url, {'task_id': window.task}, function(result) {
         _load(result);
     });
@@ -56,6 +58,7 @@ function submit() {
         var have_result = false;
         var testurl = '/submit/test/'
         _alert("Submit successful!", "alert-info");
+        say('Si sabmitol!');
         var testfunc = function() {
             console.log('checking for result');
             jQuery.post(testurl, {'submit_id': result['id']}, function(res) {
@@ -364,7 +367,8 @@ function copy() {
         }
     }
 
-    console.log(window.clip);
+    // console.log(window.clip);
+    say('Si skopíroval!');
 }
 
 function cut() {
@@ -383,6 +387,7 @@ function paste() {
         current_line_start = clip[clip.length-1];
         clip[0] = t;
     }
+    say('Si vložil!');
     refresh_editor();
 }
 
@@ -392,24 +397,26 @@ function set_programming_language(lang) {
         editor.removeClass('language-cpp');
         editor.addClass('language-delphi');
         editor_lang = 'pas';
+        say('Si nastavil paskal!');
     } else {
         editor.removeClass('language-delphi');
         editor.addClass('language-cpp');
         editor_lang = 'cpp';
+        say('Si nastavil C++!');
     }
     refresh_editor();
 }
 
 function set_language(lang) {
+    recognition.abort();
     if (lang.trim().toLowerCase()[0] == 's') {
-        recognition.stop();
         recognition.lang = 'sk-SK';
-        recognition.start();
-
+        say('Si nastavil slovenčinu!');
     } else {
-        recognition.stop();
         recognition.lang = 'en-US';
-        recognition.start();
+        say('Si nastavil angličtinu!');
     }
+    setTimeout('recognition.start()',50);
+    refresh_editor();
     refresh_editor();
 }

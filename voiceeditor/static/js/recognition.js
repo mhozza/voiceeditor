@@ -24,9 +24,7 @@ var autosave_time = 60000;
 
 //ToDo: autosave
 //priklady
-// spaceremove
 //hovorit message
-//richtext v ulohach
 
 recognition.continuous = true;
 recognition.interimResults = true;
