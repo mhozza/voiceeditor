@@ -96,7 +96,7 @@ class Task(models.Model):
     editors = models.ManyToManyField(Editor, blank=True)
 
     def __str__(self):
-        return str(self.name)
+        return self.name
 
 
 @python_2_unicode_compatible
