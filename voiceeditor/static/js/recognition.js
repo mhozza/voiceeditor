@@ -261,6 +261,8 @@ function update_tables() {
     window.setTimeout("update_tables()", refresh_time);
 }
 
+var markdown = new Markdown.Converter();
+
 function update_tasklist() {
     $("#task-list").empty();
     for (var task in window.tasks) {
@@ -275,7 +277,7 @@ function update_tasklist() {
             var id = $(this)[0].id.substr(5);
             window.task = window.tasks[id].pk;
             $("#task-name").text(window.tasks[id].fields.name);
-            $("#task-content").text(window.tasks[id].fields.content);
+            $("#task-content").html(markdown.makeHtml(window.tasks[id].fields.content));
         });
     }
 }
