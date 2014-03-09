@@ -17,6 +17,13 @@ import xml.etree.ElementTree as ET
 import json
 from voiceeditor.models import Editor, Task
 
+def get_editor(request):
+    if 'HTTP_X_REAL_IP' in request.META:
+        ip = request.META['HTTP_X_REAL_IP']
+    else:
+        ip = request.META['REMOTE_ADDR']
+    return Editor.objects.get(ip=ip)
+
 def task_submit_post(request, task_id):
     '''Spracovanie uploadnuteho submitu'''
 
@@ -26,7 +33,7 @@ def task_submit_post(request, task_id):
 
     # vyzrat z ip-cky user-a
     user_ip = request.META['REMOTE_ADDR']
-    user_id = get_object_or_404(Editor, ip=user_ip).number
+    user_id = get_editor(request).number
 
     sfile = request.POST['data']
     language = request.POST['language']
@@ -52,7 +59,7 @@ def task_get_result(request):
     # TODO SECURITY?
     submit_id = request.POST['submit_id']
     sub = get_object_or_404(Submit, protocol_id=submit_id)
-    editor = get_object_or_404(Editor, ip=user_ip)
+    editor = get_object_or_404(Editor, number=sub.person)
     update_submit(sub)
     if (sub.testing_status == 'in queue'):
         data = {'status': 'in queue'}

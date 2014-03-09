@@ -19,9 +19,7 @@ def get_editor(request):
     return Editor.objects.get(ip=ip)
 
 def get_editor_id(request):
-    return HttpResponse(get_editor(request))
-
-
+    return HttpResponse(get_editor(request).pk)
 
 def get_mapping(request):
     editor = get_editor(request)

@@ -265,7 +265,7 @@ function update_tasklist() {
     $("#task-list").empty();
     for (var task in window.tasks) {
         // Add task to tasklist
-        if ($.inArray(parseInt(editor_id), window.tasks[task].fields.editors) != -1) {
+	if ($.inArray(parseInt(editor_id), window.tasks[task].fields.editors) != -1) {
             var styl="style=color:green;";
         } else {
             var styl = '';
