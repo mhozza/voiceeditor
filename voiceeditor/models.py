@@ -21,6 +21,7 @@ class Feature(models.Model):
 @python_2_unicode_compatible
 class Editor(models.Model):
     number = models.IntegerField()
+    name = models.CharField(blank=True)
     ip = models.IPAddressField()
     features = models.ManyToManyField(Feature, blank=True)
 
@@ -112,7 +113,7 @@ class Save(models.Model):
 
     def __str__(self):
         return str(self.editor.number) + ': '\
-            + self.task + '(' + str(self.time) + ')'
+            + self.task.name + '(' + str(self.time) + ')'
 
 
 @python_2_unicode_compatible

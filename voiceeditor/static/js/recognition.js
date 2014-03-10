@@ -295,6 +295,7 @@ function update_tasklist() {
         $("#task-"+task).click(function() {
             var id = $(this)[0].id.substr(5);
             set_task(id);
+            load();
         });
     }
 }
