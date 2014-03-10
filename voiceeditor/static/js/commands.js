@@ -52,7 +52,7 @@ function submit() {
     if (all == "") return;
     console.log("Command: submit");
     var url = "/submit/" + window.task + "/";
-    jQuery.post(url, {'data': all, 'language': '.cc'}, function(result) {
+    jQuery.post(url, {'data': all, 'language': '.' + editor_lang}, function(result) {
         console.log(result);
         // begin result polling, then alert the result
         var have_result = false;
