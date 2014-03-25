@@ -6,11 +6,11 @@ import time
 import sys
 import subprocess
 
-DIR = '/tmp/submits/submits/EDITOR/'
-QUEUE_DIR = '/tmp/submits/queue/'
-TEMP_DIR = '/tmp/submits/temp/'
-INPUT_DIR = '/tmp/submits/input/'
-WRAPPER_PATH = '/tmp/submits/wrapper'
+DIR = '/home/ksp/.sustr/voiceeditor/submits/EDITOR/'
+QUEUE_DIR = '/home/ksp/.sustr/voiceeditor/judge/queue/'
+TEMP_DIR = '/tmp/judge/'
+INPUT_DIR = '/home/ksp/.sustr/voiceeditor/judge/inputs/'
+WRAPPER_PATH = '/home/ksp/.sustr/voiceeditor/judge/wrapper'
 
 def write_file(what, where):
     try:
@@ -23,8 +23,9 @@ def write_file(what, where):
 def judge(filepath):
     f = open(filepath)
     obj = json.loads(f.readline())
-    user_id = obj['user']
+    user_id = obj['user']	
     task_id = obj['task']
+    print("Testing task: " + str(task_id))
     data = obj['data']
     submit_id = obj['protocol']
     filename = obj['filename']
@@ -40,7 +41,7 @@ def judge(filepath):
     # detect language
     lang = filename.split('.')[1]
     res = {}
-    if lang == 'cc':
+    if lang == 'cc' or lang == 'cpp':
         # is c++
         # compile
         proc = subprocess.Popen(['g++', '-std=gnu++11', '-O2', '-static', '-o', 'compiled.bin', filename], stderr=subprocess.PIPE)
@@ -57,7 +58,7 @@ def judge(filepath):
     elif lang == 'pas':
         # is pascal
         # compile
-        proc = subprocess.Popen(['fpc', '-O2', '-o', 'compiled.bin', filename], stderr=subprocess.PIPE)
+        proc = subprocess.Popen(['fpc', '-O2', '-ocompiled.bin', filename], stderr=subprocess.PIPE)
         proc.wait()
         if (proc.returncode != 0):
             res = {'error': 'CERR', 'msg': proc.stderr.readlines()}
@@ -73,16 +74,17 @@ def judge(filepath):
         res['log'] = {}
         # find all the testcases for the task and test each of them
         input_dir = os.path.join(INPUT_DIR, task_id)
+        print("Finding test-cases in " + input_dir)
         log = {}
         for item in os.listdir(input_dir):
-            if (item.split('.')[1] != 'in'): # only test inputs
+            if (item.rsplit('.', 1)[1] != 'in'): # only test inputs
                 continue
             print "Testing: ", item
             infile = os.path.join(input_dir, item)
-            outfile = os.path.join(input_dir, item.split('.')[0] + '.out')
-            testfile = os.path.join(input_dir, item.split('.')[0] + '.test')
+            outfile = os.path.join(input_dir, item.rsplit('.', 1)[0] + '.out')
+            testfile = os.path.join(input_dir, item.rsplit('.', 1)[0] + '.test')
             # 3 seconds, 256MB RAM usage
-            proc = subprocess.Popen([WRAPPER_PATH, '-a2', '-f', '-m', '256000', '-t', '3', '-i', infile, '-o', testfile, 'compiled.bin'], stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+            proc = subprocess.Popen([WRAPPER_PATH, '-a2', '-f', '-m', '256000', '-t', '30', '-i', infile, '-o', testfile, 'compiled.bin'], stderr=subprocess.PIPE, stdout=subprocess.PIPE)
             # test OUTPUT
             proc.wait()            
             error = proc.stderr.readlines()[3].split(':')[1][1:]
@@ -104,7 +106,7 @@ def judge(filepath):
             print "Result: ", error
 
     # write ret as JSON:    
-    r = open(os.path.join(DIR, str(user_id), str(task_id), "%s.protokol"%(submit_id)), 'w+')
+    r = open(os.path.join(DIR, str(task_id), str(user_id), "%s.protokol"%(submit_id)), 'w+')
     r.write(json.dumps(res))
     r.close()
 

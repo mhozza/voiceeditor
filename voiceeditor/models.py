@@ -21,7 +21,7 @@ class Feature(models.Model):
 @python_2_unicode_compatible
 class Editor(models.Model):
     number = models.IntegerField()
-    name = models.CharField(blank=True)
+    name = models.CharField(max_length=100, blank=True)
     ip = models.IPAddressField()
     features = models.ManyToManyField(Feature, blank=True)
 
